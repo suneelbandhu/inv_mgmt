@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,8 @@ public class InventoryController {
     //~~spring boot data repository
     InventoryDataInterface inventoryDataInterface = new InventoryDataInterface();
 
-    @RequestMapping("/read")
-    public String index() {
+    @RequestMapping("/report")
+    public String report() {
         InventoryApplication.logger.info("Reading inventories present in memory");
         //todo
         //pass it to thymeleaf template and render in good UI
@@ -26,21 +27,26 @@ public class InventoryController {
         inventoryDataList.forEach(eachInventory -> {
             inventoryMessage.append("\n Id=" + eachInventory.getId() + "  "
                     + "Name=" + eachInventory.getName() + "  " +
-                    "Cost=" + eachInventory.getCost());
+                    "Cost=" + eachInventory.getCost()
+            +"Count="+ eachInventory.getCount());
         });
         InventoryApplication.logger.info("Read inventories::: " + inventoryMessage.toString());
         return inventoryMessage.toString().isEmpty() ? "no inventories present" : inventoryMessage.toString();
     }
 
-    @RequestMapping(value = "/create")
-    public String createInventory() {
-        //get params logic
-        String id = "123";
-        String name = "something";
-        BigDecimal cost = new BigDecimal(123.45);
-        InventoryData inventoryData = new InventoryData(id, name, cost);
+    @RequestMapping(value = "/create/{inventoryId}/{name}/{cost}")
+    public String createInventory(
+            @PathVariable String inventoryId,
+            @PathVariable String name,
+            @PathVariable float cost
+    ) {
+        if (inventoryDataInterface.getInventoryDataById(inventoryId)!=null){
+            return "inventory  with id "+ inventoryId+ " already exists. Please update (increase or decrease)";
+        }
+        InventoryData inventoryData = new InventoryData(inventoryId, name, new BigDecimal(cost));
         inventoryDataList.add(inventoryData);
-        return "inventory created and added in-memory";
+        //return read page.. (make it dynamic)
+        return "inventory created";
     }
 
     @RequestMapping(value = "/increase/{inventoryId}")
@@ -60,6 +66,7 @@ public class InventoryController {
                 InventoryApplication.logger.info(message);
             }
         }
+        InventoryApplication.logger.info(message);
         return  message;
     }
 
@@ -83,10 +90,8 @@ public class InventoryController {
                 InventoryApplication.logger.info(message);
             }
         }
+        InventoryApplication.logger.info(message);
         return  message;
     }
-
-
-
 }
 
