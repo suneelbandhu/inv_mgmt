@@ -2,9 +2,10 @@ Manifest-Version: 1.0
 Implementation-Title: inventory
 Implementation-Version: 0.0.1-SNAPSHOT
 Built-By: Suneel Bandhu Patel
-Implementation-Vendor-Id: com.cleartrip
+Implementation-Vendor-Id: com.infrrd
 Build-Jdk: 1.8.0_181
-Implementation-URL: http://projects.spring.io/spring-boot/inventory/
+Implementation-URL: http://projects.spring.io/spring-boot/inventory-ma
+ nagement/
 Created-By: Maven Integration for Eclipse
 Implementation-Vendor: Pivotal Software, Inc.
 

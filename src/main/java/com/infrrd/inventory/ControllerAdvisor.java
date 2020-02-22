@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.infrrd.inventory.util.InventoryAlreadyExistsException;
 import com.infrrd.inventory.util.InventoryNotFoundException;
 
 @ControllerAdvice
@@ -26,6 +27,14 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler{
 	     Map<String, Object> body = new LinkedHashMap<>();
 	        body.put("timestamp", LocalDateTime.now());
 	        body.put("error message", "inventory not found exception");
+	        return body;
+	}
+	
+	@ExceptionHandler(InventoryAlreadyExistsException.class)
+	 public Map<String, Object> inventoryAlreadyExistsException(InventoryAlreadyExistsException ex){
+	     Map<String, Object> body = new LinkedHashMap<>();
+	        body.put("timestamp", LocalDateTime.now());
+	        body.put("error message", "inventory already exists exception");
 	        return body;
 	}
 }

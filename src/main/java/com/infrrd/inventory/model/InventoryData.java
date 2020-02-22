@@ -1,21 +1,34 @@
 package com.infrrd.inventory.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
 
-public class InventoryData implements Cloneable {
-    private String inventoryId;
+public class InventoryData {
+
+	private String inventoryId;
     private String name;
     private BigDecimal cost;
     private int count;
-    private LocalDateTime createdOn;
-    private LocalDateTime updatedOn;
+    private Date createdOn;
+    private Date updatedOn;
     private boolean status;
 
 
 public InventoryData() {
 	
 	}
+
+public InventoryData(String inventoryId, String name, BigDecimal cost, int count, Date createdOn,
+		Date updatedOn, boolean status) {
+	super();
+	this.inventoryId = inventoryId;
+	this.name = name;
+	this.cost = cost;
+	this.count = count;
+	this.createdOn = createdOn;
+	this.updatedOn = updatedOn;
+	this.status = status;
+}
 
 
 public String getInventoryId() {
@@ -58,22 +71,22 @@ public void setCount(int count) {
 }
 
 
-public LocalDateTime getCreatedOn() {
+public Date getCreatedOn() {
 	return createdOn;
 }
 
 
 public void setCreatedOn() {
-	this.createdOn = LocalDateTime.now();
+	this.createdOn = new Date();
 }
 
 
-public LocalDateTime getUpdatedOn() {
+public Date getUpdatedOn() {
 	return updatedOn;
 }
 
 
-public void setUpdatedOn(LocalDateTime updatedOn) {
+public void setUpdatedOn(Date updatedOn) {
 	this.updatedOn = updatedOn;
 }
 

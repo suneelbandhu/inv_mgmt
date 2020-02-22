@@ -3,6 +3,7 @@ package com.infrrd.inventory.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.infrrd.inventory.model.InventoryData;
+import com.infrrd.inventory.util.InventoryAlreadyExistsException;
 import com.infrrd.inventory.util.InventoryConstant;
 import com.infrrd.inventory.util.InventoryNotFoundException;
 
@@ -34,10 +36,19 @@ public class InventoryService {
     }
 
 	public Map<String,Object> addInventory(InventoryData request) {
+		
+		//checking the uniqueness of inventory id in the list
+		if(request != null && request.getInventoryId() !=null && inventoryList.size()>0) {
+			InventoryData inventory = inventoryList.stream().filter(t -> t.getInventoryId().equals(request.getInventoryId())).findAny().get();
+				if(inventory !=null) {
+					throw new InventoryAlreadyExistsException(request.getInventoryId());
+				}
+		}
+		
 		HashMap<String,Object> response = new  HashMap<String,Object>();
 		request.setCreatedOn();
 		request.setStatus(true);
-		request.setUpdatedOn(LocalDateTime.now());
+		request.setUpdatedOn(new Date());
 		inventoryList.add(request);
 		System.out.println("add " + inventoryList.toString());
 		response.put("statusCode", 200);
@@ -61,9 +72,9 @@ public class InventoryService {
 		HashMap<String,Object> response = new  HashMap<String,Object>();
 		for(int i=0; i< inventoryList.size(); i++){
 			InventoryData inventory = inventoryList.get(i);		
-			if(inventory.getInventoryId().equals(inventoryId)) {
+			if(inventory.getInventoryId().equals(inventoryId) && inventory.getStatus() == true) {
 				inventory.setStatus(false);
-				inventory.setUpdatedOn(LocalDateTime.now());
+				inventory.setUpdatedOn(new Date());
 				response.put("statusCode", 200);
 				response.put("statusMessage", "success");
 				return response;
@@ -72,29 +83,22 @@ public class InventoryService {
 		throw new InventoryNotFoundException(inventoryId);
 	}
 
-	public List<InventoryData> listInventory(Map<String, Object> request) throws Exception{
+	public List<InventoryData> listInventory(Date fromDate,Date toDate) throws Exception{
 		List<InventoryData> response = new ArrayList<InventoryData>();
-		String fromDate = (String)request.get(InventoryConstant.FROM_DATE);
-		String toDate = (String)request.get(InventoryConstant.TO_DATE);
 		
-		//String str = "yyyy-MM-dd HH:mm:ss";
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(InventoryConstant.DATE_TIME_PATTERN);
-		LocalDateTime fromDateTime = LocalDateTime.parse(fromDate, formatter);
-		LocalDateTime toDateTime = LocalDateTime.parse(toDate, formatter);
-       LOGGER.info(" fromDateTime " + fromDateTime);
-       LOGGER.info(" toDateTime " + toDateTime);
+		System.out.println(" fromDate =" + fromDate + " toDate = "+ toDate);
 		for (int i = 0; i < inventoryList.size(); i++) {
 			InventoryData inventory = inventoryList.get(i);
-			LOGGER.info(" inventory " + inventory + " inventory.getCreatedOn().withNano(0) " + inventory.getCreatedOn().withNano(0));
-			System.out.println(" suneel " + inventory.getCreatedOn().withNano(0).compareTo(fromDateTime));
-			if (inventory.getCreatedOn() != null && inventory.getCreatedOn().withNano(0).compareTo(fromDateTime) >= 0 && inventory.getUpdatedOn()!= null && toDateTime.compareTo(inventory.getUpdatedOn().withNano(0)) >= 0) {
-				System.out.println(" 1 "); 
+			if (fromDate != null && toDate != null && inventory.getCreatedOn() != null
+					&& inventory.getUpdatedOn() != null && inventory.getCreatedOn().compareTo(fromDate) >= 0
+					&& toDate.compareTo(inventory.getUpdatedOn()) >= 0) {
+				System.out.println("1");
 				response.add(inventory);
-			} else if (inventory.getCreatedOn() != null && inventory.getCreatedOn().withNano(0).compareTo(fromDateTime) >= 0) {
-				System.out.println(" 2 ");
+			}else if(fromDate != null && inventory.getCreatedOn() != null && inventory.getCreatedOn().compareTo(fromDate) >= 0) {
+				System.out.println("2");
 				response.add(inventory);
-			}else if (inventory.getUpdatedOn()!= null && toDateTime.compareTo(inventory.getUpdatedOn().withNano(0)) >= 0) {
-				System.out.println(" 3 ");
+			}else if(toDate != null && inventory.getUpdatedOn() != null && toDate.compareTo(inventory.getUpdatedOn()) >= 0) {
+				System.out.println("3");
 				response.add(inventory);
 			}
 		}

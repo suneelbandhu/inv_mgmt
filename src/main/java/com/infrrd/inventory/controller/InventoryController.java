@@ -1,5 +1,6 @@
 package com.infrrd.inventory.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,10 +55,10 @@ public class InventoryController {
     	}
     }
     
-    @PostMapping("/inventory/report")
-    public List<InventoryData> listInventory(@RequestBody Map<String,Object> request) throws Exception{
+    @PostMapping("/inventory/report/{fromDate}/{toDate}")
+    public List<InventoryData> listInventory(@PathVariable Date fromDate, @PathVariable Date toDate) throws Exception{
     	try {
-        	return inventoryService.listInventory(request);
+        	return inventoryService.listInventory(fromDate,toDate);
         	}catch(	Exception ex) {
         		ex.printStackTrace();
         		throw ex;
