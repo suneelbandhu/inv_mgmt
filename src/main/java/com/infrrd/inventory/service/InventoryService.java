@@ -86,7 +86,6 @@ public class InventoryService {
 	public List<InventoryData> listInventory(Date fromDate,Date toDate) throws Exception{
 		List<InventoryData> response = new ArrayList<InventoryData>();
 		
-		System.out.println(" fromDate =" + fromDate + " toDate = "+ toDate);
 		for (int i = 0; i < inventoryList.size(); i++) {
 			InventoryData inventory = inventoryList.get(i);
 			if (fromDate != null && toDate != null && inventory.getCreatedOn() != null
@@ -94,11 +93,13 @@ public class InventoryService {
 					&& toDate.compareTo(inventory.getUpdatedOn()) >= 0) {
 				System.out.println("1");
 				response.add(inventory);
-			}else if(fromDate != null && inventory.getCreatedOn() != null && inventory.getCreatedOn().compareTo(fromDate) >= 0) {
+			}else if(fromDate != null && toDate==null && inventory.getCreatedOn() != null && inventory.getCreatedOn().compareTo(fromDate) >= 0) {
 				System.out.println("2");
 				response.add(inventory);
-			}else if(toDate != null && inventory.getUpdatedOn() != null && toDate.compareTo(inventory.getUpdatedOn()) >= 0) {
+			}else if(toDate != null && fromDate == null && inventory.getUpdatedOn() != null && toDate.compareTo(inventory.getUpdatedOn()) >= 0) {
 				System.out.println("3");
+				response.add(inventory);
+			}else { // if both fromDate and todate as null return the whole list
 				response.add(inventory);
 			}
 		}

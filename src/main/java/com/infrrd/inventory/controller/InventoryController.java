@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.infrrd.inventory.model.InventoryData;
 import com.infrrd.inventory.service.InventoryService;
+import com.infrrd.inventory.util.InventoryAlreadyExistsException;
+import com.infrrd.inventory.util.InventoryNotFoundException;
 
 @RestController
 public class InventoryController {
@@ -25,8 +27,17 @@ public class InventoryController {
 
 	public Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
+	/**
+	 * API to create a new inventory
+	 * @param InventoryData request
+	 * @return Map<String,Object> response
+	 * @throws InventoryAlreadyExistsException
+	 * @see InventoryAlreadyExistsException
+	 * @author Suneel Bandhu Patel
+	 * @since 2020-02-23
+	 */
     @PostMapping("/inventory")
-    public Map<String,Object> createInventory(@RequestBody InventoryData request) throws Exception {
+    public Map<String,Object> createInventory(@RequestBody InventoryData request) throws InventoryAlreadyExistsException {
     	try {
     	return inventoryService.addInventory(request);
     	}catch(	Exception ex) {
@@ -35,8 +46,17 @@ public class InventoryController {
     	}
     }
     
+    /** 
+     * API to get the details of an inventory if exists
+     * @param inventoyId
+     * @return InventoryData inventoryData
+     * @throws InventoryNotFoundException ex
+     * @see InventoryNotFoundException
+     * @author Suneel Bandhu Patel
+     * @since 2020-02-23
+     */
     @GetMapping("/inventory/{inventoyId}")
-    public Object getInventory(@PathVariable String inventoyId) throws Exception {
+    public InventoryData getInventory(@PathVariable String inventoyId) throws InventoryNotFoundException {
     	try {
     	return inventoryService.getInventory(inventoyId);
     	}catch(	Exception ex) {
@@ -45,8 +65,17 @@ public class InventoryController {
     	}
     }
     
+    /**
+     * API to delete an inventory if exists in the given data set 
+     * @param inventoyId
+     * @return Map<String,Object> response
+     * @throws InventoryNotFoundException ex
+     * @see InventoryNotFoundException
+     * @author Suneel Bandhu Patel
+     * @since 2020-02-23
+     */
     @DeleteMapping("/inventory/{inventoyId}")
-    public Map<String,Object> deleteInventory(@PathVariable String inventoyId) throws Exception {
+    public Map<String,Object> deleteInventory(@PathVariable String inventoyId) throws InventoryNotFoundException {
     	try {
     	return inventoryService.deleteInventory(inventoyId);
     	}catch(	Exception ex) {
@@ -55,6 +84,16 @@ public class InventoryController {
     	}
     }
     
+    /**
+     * API to list the given inventory created/deleted on between the given range date
+     * @param fromDate
+     * @param toDate
+     * @return List<InventoryData> response
+     * @throws Exception
+     * @author Suneel Bandhu Patel
+     * @since 2020-02-23
+     * @see InventoryData
+     */
     @PostMapping("/inventory/report/{fromDate}/{toDate}")
     public List<InventoryData> listInventory(@PathVariable Date fromDate, @PathVariable Date toDate) throws Exception{
     	try {
