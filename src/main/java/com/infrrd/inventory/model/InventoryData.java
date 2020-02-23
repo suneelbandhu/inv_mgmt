@@ -76,8 +76,8 @@ public Date getCreatedOn() {
 }
 
 
-public void setCreatedOn() {
-	this.createdOn = new Date();
+public void setCreatedOn(Date createdOn) {
+	this.createdOn = createdOn;
 }
 
 
