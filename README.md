@@ -5,13 +5,14 @@ This application was designed to develop an in memory inventory management syste
 
 ##Installation
 ####Dependencies
-Apache
+Tomcat
 Swagger
 STS
 Java 8
 ####Configuration
 
-Download all zip file and unzip it and import it as a existing maven project in STS.
+
+Download the zip file and unzip it. Import it as an existing maven project in STS.
 
 server.port=8080
 
