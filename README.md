@@ -1,7 +1,7 @@
 Inventory-Management-System
 
 
-This application was designed to develop and in memory inventory management system.
+This application was designed to develop an in memory inventory management system.
 
 ##Installation
 ####Dependencies
